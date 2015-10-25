@@ -1,37 +1,52 @@
-## This is an example of a 'special' matrix object implementation, in this case
-## a matrix that can cache its own inverse.
+## This is an example of a 'special' matrix object implementation, 
+## in this case a matrix that can cache its own inverse for 
+## efficiency.
 
-## The function makeCacheMatrix is to create a 'special' matrix object
-## that will be able to cache within itself its own inverse for 
-## efficiency
+## The function makeCacheMatrix is to create the 'special' matrix 
+## object. It takes a regular matrix as its argument.
 
 makeCacheMatrix <- function(x = matrix()) {
+    # Initialize the inverse with default NULL value
     inv <- NULL
-    set <- function(y) {
-        x <<- y
-        inv <<- NULL
-    }
+    
+    # Function to return the stored value of the original, 
+    # non-inverted matrix.
     get <- function() x
-    setinv <- function(new.inv) inv <<- new.inv
+    
+    # Function to set the inverted matrix.
+    setinv <- function(i) inv <<- i
+    
+    # The function that returns the cached inverted matrix (or NULL
+    # if one doesn't yet exist).
     getinv <- function() inv
-    list(set = set, get = get,
+
+    list(get = get,
          setinv = setinv,
          getinv = getinv)
 }
 
 
-## This function calculates the inverse of matrix cached 
-## using the function makeCacheMatrix()
+## The function cacheSolve calculates the inverse of matrix cached 
+## using makeCacheMatrix
 
 cacheSolve <- function(x, ...) {
-    inv <- x$getinv()
-    if(!is.null(inv)) {
-        message("Getting cached inverse...")
-        return(inv)
-    }
-    data <- x$get()
-    inv <- solve(data)
-    x$setinv(inv)
-    inv
     
+    # Check if a cached inverse doesn't exist, if not then create
+    # the inverse and cache it.
+    if(is.null(x$getinv())) x$setinv(solve(x$get()))
+    
+    # Return the cached result that is now guaranteed to exist.
+    x$getinv()
+}
+
+
+## The function makeInvertibleMatrix is a helper function used to
+## create a sample matrix that is guaranteed to be invertible, and
+## thus ca be used to test the makeCacheMatrix and cacheSolve
+## functions.
+
+makeInvertibleMatrix <- function(n) {
+    m <- matrix(1, n, n) 
+    for(i in 1:n) {m[i,i] <- i}
+    m
 }
