@@ -9,7 +9,7 @@ makeCacheMatrix <- function(x = matrix()) {
     # Initialize the inverse with default NULL value
     inv <- NULL
 
-    # The function that can be used to replace the input matrix with
+    # The function set() can be used to replace the input matrix with
     # another one.
     # NOTE: this function is not strictly necessary, since the matrix
     # is initialized when the "special" object is created (i.e. when
